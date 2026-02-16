@@ -9,27 +9,37 @@
 - 不接券商 API，不做实盘下单
 - 不提供收益承诺，仅用于研究分析
 
+## 在线报告链接（占位）
+
+- GitHub Pages（仓库启用后）：`https://<YOUR_GITHUB_USERNAME>.github.io/AH-Diff-Dashboard/`
+- 示例报告页面（相对路径）：`/reports/cost_sensitivity_demo.html`
+
 ## Dashboard 截图
 
-以下截图来自本地样例数据运行的 `streamlit_app.py`，用于展示页面结构与交互要点。
+以下为 demo 资产（占位图/示例图），用于展示页面结构与交互要点。可通过脚本重新生成。
 
 ### 1) Overview：全市场概览与核心指标
 
-![Dashboard Overview](docs/screenshots/dashboard_overview.png)
+![Dashboard Overview](docs/screenshots/dashboard_overview_demo.svg)
 
 ### 2) Overview（筛选）：按关键词/阈值筛选股票对
 
-![Dashboard Overview Filtered](docs/screenshots/dashboard_overview_filtered.png)
+![Dashboard Overview Filtered](docs/screenshots/dashboard_overview_filtered_demo.svg)
 
 ### 3) Pair Detail：单对详情、统计检验与时序图
 
-![Dashboard Pair Detail](docs/screenshots/dashboard_pair_detail.png)
+![Dashboard Pair Detail](docs/screenshots/dashboard_pair_detail_demo.svg)
 
 ## 项目结构
 
 ```text
 ah-premium-lab/
+├── .github/
+│   └── workflows/
+│       └── ci-pages.yml
 ├── .env.example
+├── Dockerfile
+├── docker-compose.yml
 ├── config/
 │   └── default.yaml
 ├── data/
@@ -37,6 +47,9 @@ ah-premium-lab/
 │   └── pairs.csv
 ├── docs/
 │   └── screenshots/
+├── scripts/
+│   ├── build_pages_report.py
+│   └── make_demo_assets.py
 ├── src/
 │   └── ah_premium_lab/
 │       ├── app/            # Streamlit dashboard
@@ -118,6 +131,14 @@ pytest -q tests/test_research_regression.py
 PYTHONPATH=src streamlit run src/ah_premium_lab/app/streamlit_app.py
 ```
 
+### 3.1) 本地一键运行（Docker）
+
+```bash
+docker compose up --build
+```
+
+启动后访问：`http://localhost:8501`
+
 ### 4) 生成研究报告（single）
 
 ```bash
@@ -150,6 +171,18 @@ PYTHONPATH=src python -m ah_premium_lab.report.generate_report \
 输出：
 - `single`：`outputs/ah_research_report.html`
 - `multi`：`outputs/ah_research_report_multi/index.html` + `outputs/ah_research_report_multi/pairs/*.html`
+
+### 6) 生成 demo 资产与 Pages 报告
+
+```bash
+python scripts/make_demo_assets.py
+PYTHONPATH=src python scripts/build_pages_report.py
+```
+
+输出：
+- `docs/index.html`
+- `docs/reports/cost_sensitivity_demo.html`
+- `docs/screenshots/*_demo.svg`
 
 ## 参数解释
 
@@ -227,3 +260,17 @@ pre-commit run --all-files
 - `black`
 - `ruff` / `ruff-format`
 - `isort`
+
+## GitHub Actions（CI + Pages）
+
+工作流文件：`.github/workflows/ci-pages.yml`
+
+触发：
+- `push` 到 `main`
+- `workflow_dispatch`
+
+流程：
+1. 安装依赖
+2. 运行 `pytest -q`
+3. 生成 demo 资产与 HTML 报告（`docs/`）
+4. 发布到 GitHub Pages
