@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+title: "AH-Diff-Dashboard"
+message: "If you use this project, please cite it using this metadata."
+type: software
+authors:
+  - family-names: "An"
+    given-names: "Shijie"
+version: "0.1.0"
+date-released: "2026-02-16"
+url: "https://github.com/Constantine-S-AN/AH-Diff-Dashboard"
+repository-code: "https://github.com/Constantine-S-AN/AH-Diff-Dashboard"
+license: "MIT"
+keywords:
+  - "AH premium"
+  - "quantitative research"
+  - "reproducible analytics"
+  - "cost sensitivity"

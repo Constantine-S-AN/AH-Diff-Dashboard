@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import warnings
 from datetime import date, timedelta
 from pathlib import Path
@@ -20,6 +21,8 @@ from ah_premium_lab.backtest import (
 )
 from ah_premium_lab.core import compute_premium_metrics
 from ah_premium_lab.data import (
+    CacheOnlyPriceProvider,
+    PriceProvider,
     PriceSeries,
     YahooFinanceProvider,
     check_fx_integrity,
@@ -58,6 +61,9 @@ def main() -> None:
     st.set_page_config(page_title="AH Premium Lab", page_icon="📈", layout="wide")
     st.title("AH Premium Lab")
     st.caption("研究用途：AH 价差仪表盘、统计检验与成本敏感性分析（非交易建议）")
+    offline_mode = _is_offline_mode()
+    if offline_mode:
+        st.info("OFFLINE=1：仅从 data/cache 读取数据，不会调用 yfinance。")
 
     universe = _load_universe(
         master_csv_path=str(PAIRS_MASTER_CSV_PATH),
@@ -91,6 +97,7 @@ def main() -> None:
         enforce_a_share_t1=enforce_a_share_t1,
         allow_short_a=allow_short_a,
         allow_short_h=allow_short_h,
+        offline_mode=offline_mode,
     )
 
     if controls["page"] == "Overview":
@@ -120,6 +127,7 @@ def main() -> None:
         enforce_a_share_t1=enforce_a_share_t1,
         allow_short_a=allow_short_a,
         allow_short_h=allow_short_h,
+        offline_mode=offline_mode,
     )
 
 
@@ -152,10 +160,11 @@ def _compute_pair_analytics(
     enforce_a_share_t1: bool,
     allow_short_a: bool,
     allow_short_h: bool,
+    offline_mode: bool,
 ) -> dict[str, object]:
     """Fetch market data and compute all pair-level metrics for one pair."""
 
-    provider = YahooFinanceProvider(cache_dir=CACHE_DIR)
+    provider = _build_provider(offline_mode=offline_mode)
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", UserWarning)
@@ -166,6 +175,7 @@ def _compute_pair_analytics(
             pair_id=pair_id,
             start_date=start_date,
             end_date=end_date,
+            offline_mode=offline_mode,
         )
         h_series = _get_price_with_mapping(
             provider=provider,
@@ -174,8 +184,17 @@ def _compute_pair_analytics(
             pair_id=pair_id,
             start_date=start_date,
             end_date=end_date,
+            offline_mode=offline_mode,
         )
-        fx_series = provider.get_fx(fx_pair, start_date, end_date)
+        try:
+            fx_series = provider.get_fx(fx_pair, start_date, end_date)
+        except Exception as exc:  # noqa: BLE001
+            if offline_mode:
+                raise MappingRequiredError(
+                    f"FX {fx_pair} 离线缓存缺失或不可读（OFFLINE=1），"
+                    "请先联网运行一次以填充 data/cache，或切换 OFFLINE=0。"
+                ) from exc
+            raise
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", UserWarning)
@@ -376,6 +395,7 @@ def _build_overview(
     enforce_a_share_t1: bool,
     allow_short_a: bool,
     allow_short_h: bool,
+    offline_mode: bool,
 ) -> pd.DataFrame:
     """Compute overview table for all pairs in the universe."""
 
@@ -401,6 +421,7 @@ def _build_overview(
                 enforce_a_share_t1=bool(enforce_a_share_t1),
                 allow_short_a=bool(allow_short_a),
                 allow_short_h=bool(allow_short_h),
+                offline_mode=bool(offline_mode),
             )
             rows.append(
                 {
@@ -624,6 +645,7 @@ def _render_pair_detail(
     enforce_a_share_t1: bool,
     allow_short_a: bool,
     allow_short_h: bool,
+    offline_mode: bool,
 ) -> None:
     """Render Pair Detail page."""
 
@@ -659,6 +681,7 @@ def _render_pair_detail(
         enforce_a_share_t1=enforce_a_share_t1,
         allow_short_a=allow_short_a,
         allow_short_h=allow_short_h,
+        offline_mode=offline_mode,
     )
 
     aligned = pd.DataFrame(result["aligned_frame"])
@@ -890,20 +913,41 @@ def _render_sensitivity_block(pair_id: str, sensitivity: pd.DataFrame) -> None:
     )
 
 
+def _is_offline_mode() -> bool:
+    """Return whether offline mode is enabled via `OFFLINE` env."""
+
+    normalized = os.getenv("OFFLINE", "").strip().lower()
+    return normalized in {"1", "true", "yes", "on"}
+
+
+def _build_provider(*, offline_mode: bool) -> PriceProvider:
+    """Build market data provider based on offline switch."""
+
+    if offline_mode:
+        return CacheOnlyPriceProvider(cache_dir=CACHE_DIR)
+    return YahooFinanceProvider(cache_dir=CACHE_DIR)
+
+
 def _get_price_with_mapping(
     *,
-    provider: YahooFinanceProvider,
+    provider: PriceProvider,
     ticker: str,
     leg: str,
     pair_id: str,
     start_date: str,
     end_date: str,
+    offline_mode: bool,
 ) -> PriceSeries:
     """Fetch one ticker and record manual-mapping requirement on failure."""
 
     try:
         return provider.get_price(ticker, start_date, end_date)
     except Exception as exc:  # noqa: BLE001
+        if offline_mode:
+            raise MappingRequiredError(
+                f"{leg} ticker {ticker} 离线缓存缺失或不可读（OFFLINE=1），"
+                "请先联网运行一次以填充 data/cache，或切换 OFFLINE=0。"
+            ) from exc
         mapping_path = record_mapping_issue(
             ticker=ticker,
             reason=f"{leg} leg fetch failed for {pair_id}: {exc}",

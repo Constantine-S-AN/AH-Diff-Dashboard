@@ -1,456 +1,72 @@
-# ah-premium-lab
+# AH-Diff-Dashboard
 
-> A/H 溢价研究实验室（研究/作品集用途）
->
-> `ah-premium-lab` 提供一套可复现的研究工程：
-> - Streamlit 仪表盘（Overview + Pair Detail）
-> - 统计检验（ADF / Engle-Granger / 半衰期 / rolling 协整 / 结构突变）
-> - 研究策略回测（含可执行性约束）
-> - 成本敏感性扫描与 HTML 报告（含成本容忍度雷达图）
+[![CI](https://img.shields.io/github/actions/workflow/status/Constantine-S-AN/AH-Diff-Dashboard/ci-pages.yml?branch=main&label=CI)](https://github.com/Constantine-S-AN/AH-Diff-Dashboard/actions/workflows/ci-pages.yml) [![GitHub Pages](https://img.shields.io/website?url=https%3A%2F%2Fconstantine-s-an.github.io%2FAH-Diff-Dashboard%2F&label=GitHub%20Pages)](https://constantine-s-an.github.io/AH-Diff-Dashboard/) [![License](https://img.shields.io/github/license/Constantine-S-AN/AH-Diff-Dashboard)](LICENSE) [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/) [![Ruff](https://img.shields.io/badge/Lint-Ruff-46A758?logo=ruff&logoColor=white)](https://docs.astral.sh/ruff/)
 
-## 重要声明
+这是一个面向研究与作品集展示的 AH 溢价分析平台，聚焦统计有效性与工程可复现性。
 
-- 本项目仅用于研究与展示，不接任何实盘下单。
-- 不包含券商 API 执行，不构成投资建议。
-- 回测与统计结果不保证未来收益。
+**Quick links（四个链接）**
+- Demo（GitHub Pages）：[Open](https://constantine-s-an.github.io/AH-Diff-Dashboard/)
+- Demo Report（HTML）：[Open](https://constantine-s-an.github.io/AH-Diff-Dashboard/reports/cost_sensitivity_demo.html)
+- Quickstart：[Jump](#quickstart)
+- Methodology：[docs/methodology.md](docs/methodology.md)
 
----
+_Links are derived from `git remote origin` via `scripts/print_links.py`._
 
-## 在线入口（占位）
+## What it does
+该项目用于回答一个研究问题：AH 溢价是否具备稳定统计特征，以及该特征是否会被交易成本与执行约束吞噬。
 
-- GitHub Pages 主页（启用后）：
-  `https://<YOUR_GITHUB_USERNAME>.github.io/AH-Diff-Dashboard/`
-- Pages 示例报告（相对路径）：
-  `/reports/cost_sensitivity_demo.html`
+- 统一口径计算 `AH premium / log spread`，并完成 FX 对齐与样本对齐。
+- 提供 ADF、Engle-Granger、half-life、rolling 稳定性与结构突变诊断。
+- 支持缓存优先与离线模式，减少数据源波动对研究结论的影响。
+- 输出数据质量指标（coverage / max_gap / outliers）并纳入评分流程。
+- 建模可执行性约束（T+1、做空限制、missed trades）并量化执行评分。
+- 通过 golden metrics 回归测试与离线 HTML 报告保证可复现交付。
 
----
-
-## 上一版本截图（真实运行）
-
-> 以下为上一版本本地运行时的真实 PNG 截图，用于说明页面结构与核心信息布局。
-
-### 1) Overview（全市场概览）
-
-![Previous Overview Screenshot](docs/screenshots/dashboard_overview.png)
-
-说明：
-- 展示 universe 级别的 `latest premium% / rolling z / ADF p / EG p / summary score`。
-- 可联动数据质量字段（`coverage% / max_gap_days / outlier_count`）。
-- 适合快速筛选“值得进一步研究”的 AH pair。
-
-### 2) Overview（筛选态）
-
-![Previous Overview Filtered Screenshot](docs/screenshots/dashboard_overview_filtered.png)
-
-说明：
-- 体现关键词筛选、阈值筛选后的候选集。
-- 可用于演示“从全市场到候选池”的研究流程。
-
-### 3) Pair Detail（单对详情）
-
-![Previous Pair Detail Screenshot](docs/screenshots/dashboard_pair_detail.png)
-
-说明：
-- 展示 `premium% / log_spread / rolling zscore` 时序。
-- 显示统计检验、样本期、缺失警告、rolling 协整指标。
-- 可查看结构突变断点和成本敏感性结果。
-
----
-
-## 当前版本 Demo 资产（自动生成）
-
-> 这一段用于“开箱即看”的展示面：封面图 + 三屏卡片 + 快速入口。
-
-[![Open Demo Index](https://img.shields.io/badge/Demo-Open%20Index-0A66C2?style=for-the-badge)](docs/index.html)
-[![Open Demo Report](https://img.shields.io/badge/Report-Cost%20Sensitivity-0F766E?style=for-the-badge)](docs/reports/cost_sensitivity_demo.html)
-
-[![AH Premium Lab Showcase](docs/screenshots/dashboard_showcase_demo.svg)](docs/index.html)
-
-<table>
-  <tr>
-    <td width="33%">
-      <a href="docs/screenshots/dashboard_overview_demo.svg">
-        <img src="docs/screenshots/dashboard_overview_demo.svg" alt="Demo Overview" />
-      </a>
-      <br />
-      <strong>Overview</strong><br />
-      全市场溢价、zscore、检验结果、可执行性评分
-    </td>
-    <td width="33%">
-      <a href="docs/screenshots/dashboard_overview_filtered_demo.svg">
-        <img src="docs/screenshots/dashboard_overview_filtered_demo.svg" alt="Demo Overview Filtered" />
-      </a>
-      <br />
-      <strong>Overview Filtered</strong><br />
-      score/分位数/关键词筛选，快速聚焦候选对
-    </td>
-    <td width="33%">
-      <a href="docs/screenshots/dashboard_pair_detail_demo.svg">
-        <img src="docs/screenshots/dashboard_pair_detail_demo.svg" alt="Demo Pair Detail" />
-      </a>
-      <br />
-      <strong>Pair Detail</strong><br />
-      单对时序、rolling 协整、结构变化、成本敏感性
-    </td>
-  </tr>
-</table>
-
-快速查看：
-- `docs/index.html`
-- `docs/reports/cost_sensitivity_demo.html`
-
-生成命令：
-
+## Quickstart
+### Docker
 ```bash
-python scripts/make_demo_assets.py
-```
-
----
-
-## 功能总览
-
-| 模块 | 能力 | 说明 |
-|---|---|---|
-| `data/` | 数据模型与 Provider | `PriceSeries` / `FxSeries` / `AhPair`，支持缓存与完整性检查 |
-| `core/` | A/H 溢价口径计算 | `premium_pct`、`log_spread`、rolling zscore、rolling percentile |
-| `stats/` | 统计检验 | ADF、Engle-Granger、半衰期、rolling 协整、结构突变 |
-| `backtest/` | 研究策略与成本模型 | 日频策略、可执行性约束、双边成本、borrow 场景 |
-| `report/` | 研究报告生成 | 单页/多页 HTML，含敏感性热力图与雷达图 |
-| `app/` | Streamlit Dashboard | Overview + Pair Detail，支持缓存与筛选 |
-| `tests/` | 单元测试 + 回归测试 | pytest + golden metrics 机制 |
-
----
-
-## 项目结构
-
-```text
-ah-premium-lab/
-├── .github/
-│   └── workflows/
-│       └── ci-pages.yml
-├── .env.example
-├── .dockerignore
-├── Dockerfile
-├── docker-compose.yml
-├── config/
-│   └── default.yaml
-├── data/
-│   ├── cache/
-│   ├── mapping_overrides.csv
-│   ├── pairs.csv
-│   └── pairs_master.csv
-├── docs/
-│   ├── index.html
-│   ├── reports/
-│   └── screenshots/
-├── scripts/
-│   ├── make_demo_assets.py
-│   └── build_pages_report.py
-├── src/
-│   └── ah_premium_lab/
-│       ├── app/
-│       ├── backtest/
-│       ├── core/
-│       ├── data/
-│       ├── report/
-│       ├── stats/
-│       ├── universe/
-│       ├── cli.py
-│       └── config.py
-└── tests/
-```
-
----
-
-## 快速开始
-
-### 方式 A：本地 Python 环境
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .[dev]
-```
-
-运行检查：
-
-```bash
-python -m ruff check .
-PYTHONPATH=src pytest -q
-```
-
-### 方式 B：Docker 一键启动 Dashboard
-
-```bash
+# make sure Docker Desktop/daemon is running
 docker compose up --build
+# open:
+http://localhost:8501
 ```
 
-访问：`http://localhost:8501`
-
----
-
-## 本地一键演示产物（docs）
-
+### Local
 ```bash
-python scripts/make_demo_assets.py
-PYTHONPATH=src python scripts/build_pages_report.py
-```
-
-会生成：
-- `docs/index.html`
-- `docs/reports/cost_sensitivity_demo.html`
-- `docs/screenshots/*_demo.svg`
-
----
-
-## Dashboard 使用说明
-
-启动：
-
-```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e .[dev]  # package: ah-premium-lab
+ruff check . && PYTHONPATH=src pytest -q
+PYTHONPATH=src python -c "import ah_premium_lab.app.streamlit_app as app; print('streamlit app import check passed')"
+# optional: start dashboard
 PYTHONPATH=src streamlit run src/ah_premium_lab/app/streamlit_app.py
 ```
 
-### Overview 页面
-
-可查看并筛选：
-- 估值指标：`latest premium%`、`latest rolling z`、`half_life_days`
-- 统计检验：`adf_p_value`、`eg_p_value`、`summary_score`
-- 数据质量：`coverage_pct`、`max_gap_days`、`outlier_count`、`data_quality_score`
-- 可执行性：`executability_score`、`missed_trades`、`constraint_violation_count`
-
-### Pair Detail 页面
-
-展示：
-- 时序图：`premium_pct`、`log_spread`、`rolling_zscore`
-- rolling 协整：`rolling p-value`、`rolling beta`
-- 结构突变：breakpoints + CUSUM 指标
-- 成本敏感性：缓存热力图与明细表
-
----
-
-## 报告生成（CLI）
-
-### Single HTML
-
-```bash
-PYTHONPATH=src python -m ah_premium_lab.report.generate_report \
-  --start 2024-01-01 \
-  --end 2025-12-31 \
-  --pairs-csv data/pairs.csv \
-  --cache-dir data/cache \
-  --window 252 \
-  --entry 2.0 \
-  --exit 0.5 \
-  --commission-min 0 --commission-max 10 --commission-step 2 \
-  --slippage-min 0 --slippage-max 20 --slippage-step 5 \
-  --stamp-min 0 --stamp-max 15 --stamp-step 5 \
-  --output outputs/ah_research_report.html \
-  --mode single
-```
-
-### Multi-page HTML
-
-```bash
-PYTHONPATH=src python -m ah_premium_lab.report.generate_report \
-  --start 2024-01-01 \
-  --end 2025-12-31 \
-  --pairs 601318.SS-2318.HK,600036.SS-3968.HK \
-  --output outputs/ah_research_report_multi \
-  --mode multi
-```
-
-输出：
-- `single`: `outputs/ah_research_report.html`
-- `multi`: `outputs/ah_research_report_multi/index.html` + `pairs/*.html`
-
----
-
-## 数据源与口径
-
-默认数据源：
-- 价格与汇率：`yfinance`（Yahoo Finance）
-
-核心口径：
-- `premium_pct = A / (H * fx_hkd_to_cny * share_ratio) - 1`
-- `log_spread = log(A) - log(H * fx_hkd_to_cny * share_ratio)`
-
-其中：
-- A 端为 CNY
-- H 端为 HKD，经 FX 折算为 CNY 后比较
-- 支持 `HKDCNY` 与 `CNYHKD` 两种汇率输入
-
----
-
-## 方法学与实现细节
-
-### 1) 统计检验
-
-`stats/diagnostics.py`：
-- `adf_test(series)`
-- `engle_granger_test(log_A, log_H_fx)`
-- `half_life_ar1(series)`
-- `summary_score(...)`
-
-`stats/rolling.py`：
-- rolling Engle-Granger（窗口 + 步长）
-- 稳定性指标：p-value 通过率、beta 方差、残差波动漂移
-
-`stats/breaks.py`：
-- 结构突变检测（rolling mean-shift + Welch t-test + CUSUM）
-- 输出断点日期与置信度
-
-### 2) 策略与可执行性
-
-`backtest/pairs_strategy.py`（研究版规则）：
-- `z > entry`: short spread（卖 A 买 H）
-- `z < -entry`: long spread（买 A 卖 H）
-- `|z| < exit`: 平仓
-
-`backtest/executability.py` 约束：
-- `enforce_a_share_t1=True`: A 股 T+1 最短持有约束
-- `allow_short_a=False`: 禁止做空 A 股
-- `allow_short_h=True/False`: H 股做空开关
-
-输出执行性指标：
-- `missed_trades`
-- `constraint_violation_count`
-- `effective_turnover`
-- `executability_score (0-100)`
-
-### 3) 成本模型（升级版）
-
-`backtest/costs.py` 支持：
-- A/H 双腿成本独立
-- 买卖双边拆分：commission / stamp / slippage
-- `borrow_bps` 占位参数（年化，默认 0）
-
-`sensitivity.py` 新增关键结果：
-- `breakeven_slippage`
-- `breakeven_total_cost`
-- `worst_case_net_dd`
-
-报告新增：
-- 成本容忍度雷达图
-- 成本容忍度摘要表
-
----
-
-## Universe 与数据质量
-
-- `data/pairs_master.csv`: 大 universe（50+）
-- `data/pairs.csv`: 小样本回退
-- `data/mapping_overrides.csv`: ticker 拉取失败人工修正表
-
-质量指标：
-- `coverage_pct`
-- `max_gap_days`
-- `outlier_count`
-- `data_quality_score`
-
-缺失率超过阈值（例如 20%）会在 Overview 中标红并降分。
-
----
-
-## 研究回归测试（Golden Metrics）
-
-固定夹具路径：
-- `tests/fixtures/research_regression/pairs.csv`
-- `tests/fixtures/research_regression/params.yaml`
-- `tests/fixtures/research_regression/golden_metrics.json`
-
-运行：
-
+## Reproducibility
+- 缓存目录：`data/cache/`；关键参数由脚本固定，产物可回溯。
+- 研究回归测试（golden metrics）：
 ```bash
 PYTHONPATH=src pytest -q tests/test_research_regression.py
 ```
-
-用于校验关键指标在容忍范围内保持一致，防止研究结果悄然漂移。
-
----
-
-## CI/CD 与 GitHub Pages
-
-工作流：`.github/workflows/ci-pages.yml`
-
-触发：
-- push 到 `main`
-- 手动 `workflow_dispatch`
-
-流水线步骤：
-1. 安装依赖
-2. 运行 `pytest -q`
-3. 生成 `docs/` 演示资产与示例报告
-4. 发布到 GitHub Pages
-
-### 启用 Pages（仓库设置）
-
-1. GitHub 仓库进入 `Settings` → `Pages`
-2. `Build and deployment` 选择 `GitHub Actions`
-3. push 到 `main` 等待 workflow 完成
-4. 访问 Pages URL
-
----
-
-## 安全与环境变量
-
-- 默认不需要任何密钥即可运行基础研究流程。
-- `.env.example` 仅作模板，不包含真实 Token。
-- 请勿把任何私有凭据写入代码或提交到仓库。
-
----
-
-## 常见问题
-
-### 1) `ModuleNotFoundError: ah_premium_lab`
-
-请使用：
-
+- 生成离线 demo 与报告：
 ```bash
-PYTHONPATH=src pytest -q
+PYTHONPATH=src python scripts/build_offline_demo.py
+PYTHONPATH=src python scripts/build_case_study.py --pairs "600036.SS-3968.HK,601318.SS-2318.HK"
 ```
 
-或安装为 editable：
+## Docs
+- Methodology: [docs/methodology.md](docs/methodology.md)
+- CLI: [docs/cli.md](docs/cli.md)
+- Data quality: [docs/data_quality.md](docs/data_quality.md)
+- Executability: [docs/executability.md](docs/executability.md)
+- Reproducibility: [docs/reproducibility.md](docs/reproducibility.md)
+- Demo guide: [docs/demo.md](docs/demo.md)
 
-```bash
-pip install -e .[dev]
-```
+## Disclaimer
+- 仅用于研究与工程展示，不用于实盘交易。
+- 不对接券商 API，不提供下单或执行能力。
+- 不构成投资建议，历史结果不代表未来表现。
 
-### 2) parquet 写入失败（缺少引擎）
-
-安装 `pyarrow`：
-
-```bash
-pip install pyarrow
-```
-
-### 3) yfinance 拉取失败
-
-- 检查网络
-- 稍后重试
-- 查看 `data/mapping_overrides.csv` 是否需要人工修正 ticker
-
----
-
-## 参考链接（真实性与口径）
-
-- 恒生沪深港通 AH 股溢价指数 Factsheet（HSAHP）：
-  [fs_hsahp.pdf](https://www.hsi.com.hk/static/uploads/contents/en/dl_centre/factsheets/fs_hsahp.pdf)
-- 上交所英文站 H50066 方法论文档：
-  [H50066_h50066hbooken_EN.pdf](https://english.sse.com.cn/indices/indices/list/indexmethods/c/H50066_h50066hbooken_EN.pdf)
-
-说明：本仓库使用公开定义做研究复现，不声称与官方指数编制细节逐项一致。
-
----
-
-## 不做什么
-
-- 不接实盘交易、不下单
-- 不承诺收益
-- 不替代投资顾问意见
-
----
-
-## License
-
-如未另行声明，默认按仓库后续添加的 License 文件执行。
+## License & Citation
+- License: [MIT](LICENSE)
+- Citation metadata: [CITATION.cff](CITATION.cff)
+- One-pager: [docs/one_pager.md](docs/one_pager.md)

@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -16,7 +19,22 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run Smoke Test
+        run: ./scripts/smoke_test.sh
+
   test-and-build-pages:
+    needs: smoke-test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,16 +48,13 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e .
+          pip install -e ".[dev]"
 
-      - name: Run Tests
-        run: PYTHONPATH=src pytest -q
+      - name: Build Offline Demo Docs
+        run: PYTHONPATH=src python scripts/build_offline_demo.py
 
-      - name: Generate Demo Assets
-        run: python scripts/make_demo_assets.py
-
-      - name: Generate Pages Report
-        run: PYTHONPATH=src python scripts/build_pages_report.py
+      - name: Print Pages Links
+        run: python scripts/print_links.py
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

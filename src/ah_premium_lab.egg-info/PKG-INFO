@@ -5,6 +5,7 @@ Summary: Research toolkit for A/H premium dashboard, statistical tests, and cost
 Author: AH Premium Lab
 Requires-Python: >=3.11
 Description-Content-Type: text/markdown
+License-File: LICENSE
 Requires-Dist: numpy>=1.26
 Requires-Dist: pandas>=2.2
 Requires-Dist: scipy>=1.11
@@ -23,158 +24,77 @@ Requires-Dist: pre-commit>=4.0; extra == "dev"
 Requires-Dist: ruff>=0.9; extra == "dev"
 Requires-Dist: mypy>=1.15; extra == "dev"
 Requires-Dist: types-PyYAML>=6.0.12.20241230; extra == "dev"
+Dynamic: license-file
 
-# ah-premium-lab
+# AH-Diff-Dashboard
 
-`ah-premium-lab` 是一个采用 `src` 布局的 Python 研究项目模板，包含：
-- 可直接运行的 CLI 入口（`python -m ah_premium_lab ...`）
-- 可直接运行的 Streamlit hello dashboard
-- A/H 价差研究模块骨架（data/core/stats/backtest/report/app）
-- `pre-commit` 代码质量钩子（black/ruff/isort）
+[![CI](https://img.shields.io/github/actions/workflow/status/Constantine-S-AN/AH-Diff-Dashboard/ci-pages.yml?branch=main&label=CI)](https://github.com/Constantine-S-AN/AH-Diff-Dashboard/actions/workflows/ci-pages.yml) [![GitHub Pages](https://img.shields.io/website?url=https%3A%2F%2Fconstantine-s-an.github.io%2FAH-Diff-Dashboard%2F&label=GitHub%20Pages)](https://constantine-s-an.github.io/AH-Diff-Dashboard/) [![License](https://img.shields.io/github/license/Constantine-S-AN/AH-Diff-Dashboard)](LICENSE) [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/) [![Ruff](https://img.shields.io/badge/Lint-Ruff-46A758?logo=ruff&logoColor=white)](https://docs.astral.sh/ruff/)
 
-## 目录结构
+这是一个面向研究与作品集展示的 AH 溢价分析平台，聚焦统计有效性与工程可复现性。
 
-```text
-ah-premium-lab/
-├── .env.example
-├── .gitignore
-├── .pre-commit-config.yaml
-├── README.md
-├── config/
-│   └── default.yaml
-├── pyproject.toml
-├── src/
-│   └── ah_premium_lab/
-│       ├── __init__.py
-│       ├── __main__.py
-│       ├── cli.py
-│       ├── config.py
-│       ├── app/
-│       │   ├── __init__.py
-│       │   ├── dashboard.py
-│       │   └── hello_dashboard.py
-│       ├── backtest/
-│       │   ├── __init__.py
-│       │   └── simulator.py
-│       ├── core/
-│       │   ├── __init__.py
-│       │   └── premium.py
-│       ├── data/
-│       │   ├── __init__.py
-│       │   └── loader.py
-│       ├── report/
-│       │   ├── __init__.py
-│       │   ├── cost_sensitivity.py
-│       │   └── templates/
-│       │       └── cost_report.html.j2
-│       └── stats/
-│           ├── __init__.py
-│           └── diagnostics.py
-└── tests/
-    ├── test_core.py
-    ├── test_hello_cli.py
-    └── test_stats.py
-```
+**Quick links（四个链接）**
+- Demo（GitHub Pages）：[Open](https://constantine-s-an.github.io/AH-Diff-Dashboard/)
+- Demo Report（HTML）：[Open](https://constantine-s-an.github.io/AH-Diff-Dashboard/reports/cost_sensitivity_demo.html)
+- Quickstart：[Jump](#quickstart)
+- Methodology：[docs/methodology.md](docs/methodology.md)
 
-## 依赖
+_Links are derived from `git remote origin` via `scripts/print_links.py`._
 
-核心依赖包含：
-- `pandas`
-- `numpy`
-- `statsmodels`
-- `scipy`
-- `plotly`
-- `streamlit`
-- `pydantic`
-- `pyyaml`
-- `pytest`
-- `yfinance`
+## What it does
+该项目用于回答一个研究问题：AH 溢价是否具备稳定统计特征，以及该特征是否会被交易成本与执行约束吞噬。
 
-## 安装
+- 统一口径计算 `AH premium / log spread`，并完成 FX 对齐与样本对齐。
+- 提供 ADF、Engle-Granger、half-life、rolling 稳定性与结构突变诊断。
+- 支持缓存优先与离线模式，减少数据源波动对研究结论的影响。
+- 输出数据质量指标（coverage / max_gap / outliers）并纳入评分流程。
+- 建模可执行性约束（T+1、做空限制、missed trades）并量化执行评分。
+- 通过 golden metrics 回归测试与离线 HTML 报告保证可复现交付。
 
+## Quickstart
+### Docker
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .[dev]
+# make sure Docker Desktop/daemon is running
+docker compose up --build
+# open:
+http://localhost:8501
 ```
 
-## 运行方式
-
-### 1) Hello CLI（最小可运行）
-
+### Local
 ```bash
-python -m ah_premium_lab hello
-python -m ah_premium_lab hello --message "hello from cli"
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e .[dev]  # package: ah-premium-lab
+ruff check . && PYTHONPATH=src pytest -q
+PYTHONPATH=src python -c "import ah_premium_lab.app.streamlit_app as app; print('streamlit app import check passed')"
+# optional: start dashboard
+PYTHONPATH=src streamlit run src/ah_premium_lab/app/streamlit_app.py
 ```
 
-### 2) Hello Dashboard（最小可运行）
-
+## Reproducibility
+- 缓存目录：`data/cache/`；关键参数由脚本固定，产物可回溯。
+- 研究回归测试（golden metrics）：
 ```bash
-streamlit run src/ah_premium_lab/app/hello_dashboard.py
+PYTHONPATH=src pytest -q tests/test_research_regression.py
 ```
-
-### 3) 研究 CLI 示例
-
+- 生成离线 demo 与报告：
 ```bash
-python -m ah_premium_lab stats --config config/default.yaml --pair 600519-06881
-python -m ah_premium_lab cost-report --config config/default.yaml --pair 600519-06881 --output outputs/cost_report.html
+PYTHONPATH=src python scripts/build_offline_demo.py
+PYTHONPATH=src python scripts/build_case_study.py --pairs "600036.SS-3968.HK,601318.SS-2318.HK"
 ```
 
-### 4) 研究 Dashboard 示例
+## Docs
+- Methodology: [docs/methodology.md](docs/methodology.md)
+- CLI: [docs/cli.md](docs/cli.md)
+- Data quality: [docs/data_quality.md](docs/data_quality.md)
+- Executability: [docs/executability.md](docs/executability.md)
+- Reproducibility: [docs/reproducibility.md](docs/reproducibility.md)
+- Demo guide: [docs/demo.md](docs/demo.md)
 
-```bash
-streamlit run src/ah_premium_lab/app/dashboard.py -- --config config/default.yaml
-```
+## Disclaimer
+- 仅用于研究与工程展示，不用于实盘交易。
+- 不对接券商 API，不提供下单或执行能力。
+- 不构成投资建议，历史结果不代表未来表现。
 
-## 数据层（新增）
-
-- 股票对样本文件：`data/pairs.csv`
-- 缓存目录：`data/cache/`（parquet）
-- Provider：
-  - `PriceProvider`（抽象类）
-  - `YahooFinanceProvider`（`yfinance` 实现）
-- 数据完整性检查：
-  - 缺失交易日（business day）
-  - 异常跳点（`|zscore| > 8`）
-
-## 统计检验（研究用途）
-
-`stats/diagnostics.py` 提供以下函数：
-- `adf_test(series) -> p_value, test_stat, used_lags`
-- `engle_granger_test(log_A, log_H_fx) -> p_value, beta, resid_series`
-- `half_life_ar1(series) -> half_life_days`
-- `summary_score(...) -> 0-100`
-
-这里的含义：
-- ADF：检验价差序列是否更接近平稳（均值回复）而非单位根过程。
-- Engle-Granger：先回归 `log_A = alpha + beta * log_H_fx + resid`，再对残差做 ADF；若残差平稳，支持协整假设。
-- AR(1) 半衰期：用 `Δx_t = k * x_{t-1} + ε_t` 估计回复速度，`half_life = -ln(2)/k`。
-- 研究评分 `summary_score`：把 ADF p 值、EG p 值、半衰期、zscore 稳定性聚合到同一标尺，便于横向比较。
-
-评分公式（0-100）：
-- `adf_component = 100 * (1 - clamp(adf_p, 0, 1))`
-- `eg_component = 100 * (1 - clamp(eg_p, 0, 1))`
-- `half_life_component = 100 * exp(-abs(log(half_life_days / 20)))`（目标约 20 天）
-- `zscore_stability = 100 * (0.4*exp(-|mean(z)|) + 0.4*exp(-|std(z)-1|) + 0.2*exp(-8*tail_rate))`
-- `tail_rate = mean(|z| > 3)`
-- `summary_score = 0.35*adf_component + 0.35*eg_component + 0.20*half_life_component + 0.10*zscore_stability`
-
-局限性（务必注意）：
-- 所有检验都依赖历史样本与模型设定，对结构性断点、制度切换、停牌/复权误差很敏感。
-- p 值不是“未来必然均值回复”的概率，只是样本内统计证据强度。
-- 半衰期基于线性 AR(1) 近似，极端行情、非线性回复下会失真。
-- 研究评分是启发式综合指标，不是交易信号，不替代风控与成本建模。
-
-## pre-commit
-
-安装并启用：
-
-```bash
-pre-commit install
-pre-commit run --all-files
-```
-
-默认钩子：
-- `black`
-- `ruff` / `ruff-format`
-- `isort`
+## License & Citation
+- License: [MIT](LICENSE)
+- Citation metadata: [CITATION.cff](CITATION.cff)
+- One-pager: [docs/one_pager.md](docs/one_pager.md)
