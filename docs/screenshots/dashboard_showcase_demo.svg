@@ -1,0 +1,86 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1600"
+  height="900"
+  viewBox="0 0 1600 900"
+>
+  <defs>
+    <linearGradient id="heroBg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#020617"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="heroLine" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="50%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#22C55E"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#heroBg)"/>
+  <circle cx="210" cy="180" r="220" fill="#1D4ED8" opacity="0.22"/>
+  <circle cx="1430" cy="740" r="320" fill="#14B8A6" opacity="0.16"/>
+
+  <text
+    x="96"
+    y="108"
+    font-size="56"
+    font-weight="700"
+    font-family="Helvetica, Arial, sans-serif"
+    fill="#F8FAFC"
+  >
+    AH Premium Lab Showcase
+  </text>
+  <text x="96" y="148" font-size="26" font-family="Helvetica, Arial, sans-serif" fill="#94A3B8">
+    Dashboard + Diagnostics + Executability + Cost Sensitivity
+  </text>
+  <rect x="96" y="174" width="508" height="8" rx="4" fill="url(#heroLine)"/>
+
+  <rect x="96" y="238" width="452" height="290" rx="18" fill="#0F172A" stroke="#1E293B"/>
+  <rect x="96" y="238" width="452" height="56" rx="18" fill="#111827"/>
+  <text x="126" y="275" font-size="24" font-weight="700" fill="#E2E8F0">Overview</text>
+  <polyline
+    points="128,488 178,430 228,446 278,400 328,430 378,378 428,404 478,366 518,384"
+    fill="none"
+    stroke="#3B82F6"
+    stroke-width="5"
+  />
+  <text x="126" y="330" font-size="18" fill="#94A3B8">- Premium monitor</text>
+  <text x="126" y="360" font-size="18" fill="#94A3B8">- ADF / EG / Half-life</text>
+  <text x="126" y="390" font-size="18" fill="#94A3B8">- Data quality + executability</text>
+
+  <rect x="574" y="238" width="452" height="290" rx="18" fill="#0F172A" stroke="#1E293B"/>
+  <rect x="574" y="238" width="452" height="56" rx="18" fill="#111827"/>
+  <text x="604" y="275" font-size="24" font-weight="700" fill="#E2E8F0">Overview Filtered</text>
+  <polyline
+    points="606,488 656,438 706,458 756,404 806,434 856,382 906,412 956,372 996,390"
+    fill="none"
+    stroke="#06B6D4"
+    stroke-width="5"
+  />
+  <text x="604" y="330" font-size="18" fill="#94A3B8">- Score and percentile filters</text>
+  <text x="604" y="360" font-size="18" fill="#94A3B8">- Keyword screening</text>
+  <text x="604" y="390" font-size="18" fill="#94A3B8">- High-quality candidate set</text>
+
+  <rect x="1052" y="238" width="452" height="290" rx="18" fill="#0F172A" stroke="#1E293B"/>
+  <rect x="1052" y="238" width="452" height="56" rx="18" fill="#111827"/>
+  <text x="1082" y="275" font-size="24" font-weight="700" fill="#E2E8F0">Pair Detail</text>
+  <polyline
+    points="1084,488 1134,430 1184,446 1234,400 1284,430 1334,378 1384,404 1434,366 1474,384"
+    fill="none"
+    stroke="#8B5CF6"
+    stroke-width="5"
+  />
+  <text x="1082" y="330" font-size="18" fill="#94A3B8">- Spread and z-score views</text>
+  <text x="1082" y="360" font-size="18" fill="#94A3B8">- Rolling cointegration</text>
+  <text x="1082" y="390" font-size="18" fill="#94A3B8">- Breakpoints + sensitivity cache</text>
+
+  <rect x="96" y="588" width="220" height="74" rx="37" fill="#1E293B"/>
+  <text x="140" y="634" font-size="24" font-weight="700" fill="#BFDBFE">ADF / EG</text>
+  <rect x="336" y="588" width="258" height="74" rx="37" fill="#1E293B"/>
+  <text x="378" y="634" font-size="24" font-weight="700" fill="#99F6E4">Break Detection</text>
+  <rect x="616" y="588" width="250" height="74" rx="37" fill="#1E293B"/>
+  <text x="654" y="634" font-size="24" font-weight="700" fill="#FDE68A">Executability</text>
+  <rect x="886" y="588" width="314" height="74" rx="37" fill="#1E293B"/>
+  <text x="930" y="634" font-size="24" font-weight="700" fill="#DDD6FE">Cost Sensitivity</text>
+  <rect x="1222" y="588" width="282" height="74" rx="37" fill="#1E293B"/>
+  <text x="1270" y="634" font-size="24" font-weight="700" fill="#86EFAC">Research Report</text>
+</svg>

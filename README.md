@@ -59,11 +59,45 @@
 
 ## 当前版本 Demo 资产（自动生成）
 
-> 以下 SVG 可通过脚本自动生成，适用于仓库首屏展示与 CI 产物。
+> 这一段用于“开箱即看”的展示面：封面图 + 三屏卡片 + 快速入口。
 
-![Demo Overview](docs/screenshots/dashboard_overview_demo.svg)
-![Demo Overview Filtered](docs/screenshots/dashboard_overview_filtered_demo.svg)
-![Demo Pair Detail](docs/screenshots/dashboard_pair_detail_demo.svg)
+[![Open Demo Index](https://img.shields.io/badge/Demo-Open%20Index-0A66C2?style=for-the-badge)](docs/index.html)
+[![Open Demo Report](https://img.shields.io/badge/Report-Cost%20Sensitivity-0F766E?style=for-the-badge)](docs/reports/cost_sensitivity_demo.html)
+
+[![AH Premium Lab Showcase](docs/screenshots/dashboard_showcase_demo.svg)](docs/index.html)
+
+<table>
+  <tr>
+    <td width="33%">
+      <a href="docs/screenshots/dashboard_overview_demo.svg">
+        <img src="docs/screenshots/dashboard_overview_demo.svg" alt="Demo Overview" />
+      </a>
+      <br />
+      <strong>Overview</strong><br />
+      全市场溢价、zscore、检验结果、可执行性评分
+    </td>
+    <td width="33%">
+      <a href="docs/screenshots/dashboard_overview_filtered_demo.svg">
+        <img src="docs/screenshots/dashboard_overview_filtered_demo.svg" alt="Demo Overview Filtered" />
+      </a>
+      <br />
+      <strong>Overview Filtered</strong><br />
+      score/分位数/关键词筛选，快速聚焦候选对
+    </td>
+    <td width="33%">
+      <a href="docs/screenshots/dashboard_pair_detail_demo.svg">
+        <img src="docs/screenshots/dashboard_pair_detail_demo.svg" alt="Demo Pair Detail" />
+      </a>
+      <br />
+      <strong>Pair Detail</strong><br />
+      单对时序、rolling 协整、结构变化、成本敏感性
+    </td>
+  </tr>
+</table>
+
+快速查看：
+- `docs/index.html`
+- `docs/reports/cost_sensitivity_demo.html`
 
 生成命令：
 
