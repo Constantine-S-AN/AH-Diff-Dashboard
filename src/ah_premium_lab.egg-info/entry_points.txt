@@ -1,0 +1,2 @@
+[console_scripts]
+ah-premium = ah_premium_lab.cli:main

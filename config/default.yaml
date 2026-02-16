@@ -1,0 +1,40 @@
+project:
+  name: "ah-premium-lab"
+  timezone: "Asia/Hong_Kong"
+
+data:
+  source: "synthetic"
+  start_date: "2022-01-03"
+  end_date: "2024-12-31"
+  frequency: "B"
+  seed: 42
+  pairs:
+    - pair_id: "600519-06881"
+      a_symbol: "600519"
+      h_symbol: "06881"
+      fx_symbol: "CNYHKD"
+    - pair_id: "601318-02318"
+      a_symbol: "601318"
+      h_symbol: "02318"
+      fx_symbol: "CNYHKD"
+
+core:
+  premium_method: "log_ratio"
+  zscore_window: 30
+
+stats:
+  adf_max_lag: 5
+  adf_alpha: 0.05
+  coint_trend: "c"
+
+backtest:
+  initial_capital: 1000000
+  entry_z: 1.5
+  exit_z: 0.4
+  max_holding_days: 20
+  annualization: 252
+
+report:
+  output_dir: "outputs"
+  cost_grid_bps: [0, 5, 10, 20, 30, 50]
+  include_plotly: true

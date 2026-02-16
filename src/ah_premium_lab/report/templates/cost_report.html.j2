@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AH Premium Cost Sensitivity Report</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 28px;
+      color: #111827;
+      background: #f8fafc;
+    }
+    h1, h2 { margin-bottom: 8px; }
+    .meta { color: #4b5563; margin-bottom: 22px; }
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 12px rgba(15, 23, 42, 0.08);
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 8px;
+      text-align: right;
+    }
+    th:first-child, td:first-child { text-align: left; }
+  </style>
+</head>
+<body>
+  <h1>AH Premium Cost Sensitivity Report</h1>
+  <p class="meta">Pair: <strong>{{ pair_id }}</strong> | Generated at: {{ generated_at }}</p>
+
+  <div class="card">
+    <h2>Best Scenario</h2>
+    <p>Best cumulative return appears at <strong>{{ "%.1f"|format(best_row.cost_bps) }} bps</strong>.</p>
+    <p>Cumulative return: <strong>{{ "%.4f"|format(best_row.cumulative_return) }}</strong>,
+      Sharpe: <strong>{{ "%.4f"|format(best_row.annualized_sharpe) }}</strong>,
+      Max drawdown: <strong>{{ "%.4f"|format(best_row.max_drawdown) }}</strong>,
+      Trades: <strong>{{ best_row.trade_count }}</strong>.</p>
+  </div>
+
+  <div class="card">
+    <h2>Grid Results</h2>
+    {{ table_html | safe }}
+  </div>
+
+  {% if chart_html %}
+  <div class="card">
+    <h2>Visualization</h2>
+    {{ chart_html | safe }}
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <h2>Report Config Snapshot</h2>
+    <pre>{{ config }}</pre>
+  </div>
+</body>
+</html>

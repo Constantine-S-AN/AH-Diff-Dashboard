@@ -1,0 +1,47 @@
+{
+  "600036.SS-3968.HK": {
+    "adf_p_value": 0.0011668972624705159,
+    "eg_p_value": 0.0009800513469222156,
+    "half_life_days": 12.229016308546985,
+    "latest_premium_pct": 19.076778320856526,
+    "strategy_end_nav": 2.557366986257296,
+    "strategy_max_dd": -0.08625537815789042,
+    "summary_score": 90.5383684538632
+  },
+  "601318.SS-2318.HK": {
+    "adf_p_value": 0.03063658895305515,
+    "eg_p_value": 0.031846160984558,
+    "half_life_days": 21.210680443495274,
+    "latest_premium_pct": 22.79215953713385,
+    "strategy_end_nav": 1.803365006853121,
+    "strategy_max_dd": -0.2373525908013232,
+    "summary_score": 95.04776159503862
+  },
+  "601398.SS-1398.HK": {
+    "adf_p_value": 0.10919112250811402,
+    "eg_p_value": 0.02454139839514756,
+    "half_life_days": 27.777448678987767,
+    "latest_premium_pct": 32.682616097767124,
+    "strategy_end_nav": 2.0184144657091116,
+    "strategy_max_dd": -0.13435365692475087,
+    "summary_score": 87.97720696305961
+  },
+  "601857.SS-0857.HK": {
+    "adf_p_value": 0.00024280736154353832,
+    "eg_p_value": 0.000199990020046618,
+    "half_life_days": 10.347773095708613,
+    "latest_premium_pct": 19.747253904460482,
+    "strategy_end_nav": 1.7795089715841088,
+    "strategy_max_dd": -0.11975571307289035,
+    "summary_score": 89.27591297155213
+  },
+  "601939.SS-0939.HK": {
+    "adf_p_value": 0.020649535054113384,
+    "eg_p_value": 0.020529594503273844,
+    "half_life_days": 22.426636598000115,
+    "latest_premium_pct": 17.808664845594603,
+    "strategy_end_nav": 1.279244394971652,
+    "strategy_max_dd": -0.25621436180889356,
+    "summary_score": 95.03078107502431
+  }
+}

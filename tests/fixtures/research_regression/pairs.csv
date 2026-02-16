@@ -1,0 +1,6 @@
+name,a_ticker,h_ticker,share_ratio,notes
+Ping An Insurance,601318.SS,2318.HK,1.0,regression-fixture
+China Merchants Bank,600036.SS,3968.HK,1.0,regression-fixture
+Industrial and Commercial Bank of China,601398.SS,1398.HK,1.0,regression-fixture
+China Construction Bank,601939.SS,0939.HK,1.0,regression-fixture
+PetroChina,601857.SS,0857.HK,1.0,regression-fixture

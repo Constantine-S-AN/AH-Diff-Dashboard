@@ -1,0 +1,180 @@
+Metadata-Version: 2.4
+Name: ah-premium-lab
+Version: 0.1.0
+Summary: Research toolkit for A/H premium dashboard, statistical tests, and cost sensitivity reporting
+Author: AH Premium Lab
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=1.26
+Requires-Dist: pandas>=2.2
+Requires-Dist: scipy>=1.11
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: pydantic>=2.8
+Requires-Dist: yfinance>=0.2.61
+Requires-Dist: statsmodels>=0.14
+Requires-Dist: streamlit>=1.42
+Requires-Dist: plotly>=5.24
+Requires-Dist: jinja2>=3.1
+Requires-Dist: pytest>=8.3
+Provides-Extra: dev
+Requires-Dist: black>=24.10; extra == "dev"
+Requires-Dist: isort>=5.13; extra == "dev"
+Requires-Dist: pre-commit>=4.0; extra == "dev"
+Requires-Dist: ruff>=0.9; extra == "dev"
+Requires-Dist: mypy>=1.15; extra == "dev"
+Requires-Dist: types-PyYAML>=6.0.12.20241230; extra == "dev"
+
+# ah-premium-lab
+
+`ah-premium-lab` 是一个采用 `src` 布局的 Python 研究项目模板，包含：
+- 可直接运行的 CLI 入口（`python -m ah_premium_lab ...`）
+- 可直接运行的 Streamlit hello dashboard
+- A/H 价差研究模块骨架（data/core/stats/backtest/report/app）
+- `pre-commit` 代码质量钩子（black/ruff/isort）
+
+## 目录结构
+
+```text
+ah-premium-lab/
+├── .env.example
+├── .gitignore
+├── .pre-commit-config.yaml
+├── README.md
+├── config/
+│   └── default.yaml
+├── pyproject.toml
+├── src/
+│   └── ah_premium_lab/
+│       ├── __init__.py
+│       ├── __main__.py
+│       ├── cli.py
+│       ├── config.py
+│       ├── app/
+│       │   ├── __init__.py
+│       │   ├── dashboard.py
+│       │   └── hello_dashboard.py
+│       ├── backtest/
+│       │   ├── __init__.py
+│       │   └── simulator.py
+│       ├── core/
+│       │   ├── __init__.py
+│       │   └── premium.py
+│       ├── data/
+│       │   ├── __init__.py
+│       │   └── loader.py
+│       ├── report/
+│       │   ├── __init__.py
+│       │   ├── cost_sensitivity.py
+│       │   └── templates/
+│       │       └── cost_report.html.j2
+│       └── stats/
+│           ├── __init__.py
+│           └── diagnostics.py
+└── tests/
+    ├── test_core.py
+    ├── test_hello_cli.py
+    └── test_stats.py
+```
+
+## 依赖
+
+核心依赖包含：
+- `pandas`
+- `numpy`
+- `statsmodels`
+- `scipy`
+- `plotly`
+- `streamlit`
+- `pydantic`
+- `pyyaml`
+- `pytest`
+- `yfinance`
+
+## 安装
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .[dev]
+```
+
+## 运行方式
+
+### 1) Hello CLI（最小可运行）
+
+```bash
+python -m ah_premium_lab hello
+python -m ah_premium_lab hello --message "hello from cli"
+```
+
+### 2) Hello Dashboard（最小可运行）
+
+```bash
+streamlit run src/ah_premium_lab/app/hello_dashboard.py
+```
+
+### 3) 研究 CLI 示例
+
+```bash
+python -m ah_premium_lab stats --config config/default.yaml --pair 600519-06881
+python -m ah_premium_lab cost-report --config config/default.yaml --pair 600519-06881 --output outputs/cost_report.html
+```
+
+### 4) 研究 Dashboard 示例
+
+```bash
+streamlit run src/ah_premium_lab/app/dashboard.py -- --config config/default.yaml
+```
+
+## 数据层（新增）
+
+- 股票对样本文件：`data/pairs.csv`
+- 缓存目录：`data/cache/`（parquet）
+- Provider：
+  - `PriceProvider`（抽象类）
+  - `YahooFinanceProvider`（`yfinance` 实现）
+- 数据完整性检查：
+  - 缺失交易日（business day）
+  - 异常跳点（`|zscore| > 8`）
+
+## 统计检验（研究用途）
+
+`stats/diagnostics.py` 提供以下函数：
+- `adf_test(series) -> p_value, test_stat, used_lags`
+- `engle_granger_test(log_A, log_H_fx) -> p_value, beta, resid_series`
+- `half_life_ar1(series) -> half_life_days`
+- `summary_score(...) -> 0-100`
+
+这里的含义：
+- ADF：检验价差序列是否更接近平稳（均值回复）而非单位根过程。
+- Engle-Granger：先回归 `log_A = alpha + beta * log_H_fx + resid`，再对残差做 ADF；若残差平稳，支持协整假设。
+- AR(1) 半衰期：用 `Δx_t = k * x_{t-1} + ε_t` 估计回复速度，`half_life = -ln(2)/k`。
+- 研究评分 `summary_score`：把 ADF p 值、EG p 值、半衰期、zscore 稳定性聚合到同一标尺，便于横向比较。
+
+评分公式（0-100）：
+- `adf_component = 100 * (1 - clamp(adf_p, 0, 1))`
+- `eg_component = 100 * (1 - clamp(eg_p, 0, 1))`
+- `half_life_component = 100 * exp(-abs(log(half_life_days / 20)))`（目标约 20 天）
+- `zscore_stability = 100 * (0.4*exp(-|mean(z)|) + 0.4*exp(-|std(z)-1|) + 0.2*exp(-8*tail_rate))`
+- `tail_rate = mean(|z| > 3)`
+- `summary_score = 0.35*adf_component + 0.35*eg_component + 0.20*half_life_component + 0.10*zscore_stability`
+
+局限性（务必注意）：
+- 所有检验都依赖历史样本与模型设定，对结构性断点、制度切换、停牌/复权误差很敏感。
+- p 值不是“未来必然均值回复”的概率，只是样本内统计证据强度。
+- 半衰期基于线性 AR(1) 近似，极端行情、非线性回复下会失真。
+- 研究评分是启发式综合指标，不是交易信号，不替代风控与成本建模。
+
+## pre-commit
+
+安装并启用：
+
+```bash
+pre-commit install
+pre-commit run --all-files
+```
+
+默认钩子：
+- `black`
+- `ruff` / `ruff-format`
+- `isort`

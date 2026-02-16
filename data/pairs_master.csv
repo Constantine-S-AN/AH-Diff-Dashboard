@@ -1,0 +1,58 @@
+name,a_ticker,h_ticker,share_ratio,notes
+Ping An Insurance,601318.SS,2318.HK,1.0,financial-insurance
+China Merchants Bank,600036.SS,3968.HK,1.0,financial-bank
+Industrial and Commercial Bank of China,601398.SS,1398.HK,1.0,financial-bank
+China Construction Bank,601939.SS,0939.HK,1.0,financial-bank
+Agricultural Bank of China,601288.SS,1288.HK,1.0,financial-bank
+Bank of China,601988.SS,3988.HK,1.0,financial-bank
+Bank of Communications,601328.SS,3328.HK,1.0,financial-bank
+China CITIC Bank,601998.SS,0998.HK,1.0,financial-bank
+China Everbright Bank,601818.SS,6818.HK,1.0,financial-bank
+China Minsheng Bank,600016.SS,1988.HK,1.0,financial-bank
+CITIC Securities,600030.SS,6030.HK,1.0,financial-broker
+Haitong Securities,600837.SS,6837.HK,1.0,financial-broker
+Guotai Junan Securities,601211.SS,2611.HK,1.0,financial-broker
+CSC Financial,601066.SS,6066.HK,1.0,financial-broker
+CICC,601995.SS,3908.HK,1.0,financial-broker
+Huatai Securities,601688.SS,6886.HK,1.0,financial-broker
+China Galaxy Securities,601881.SS,6881.HK,1.0,financial-broker
+China Pacific Insurance,601601.SS,2601.HK,1.0,financial-insurance
+China Life Insurance,601628.SS,2628.HK,1.0,financial-insurance
+PICC Group,601319.SS,1339.HK,1.0,financial-insurance
+New China Life Insurance,601336.SS,1336.HK,1.0,financial-insurance
+PetroChina,601857.SS,0857.HK,1.0,energy-oil-gas
+Sinopec,600028.SS,0386.HK,1.0,energy-oil-gas
+China Shenhua Energy,601088.SS,1088.HK,1.0,energy-coal
+China Coal Energy,601898.SS,1898.HK,1.0,energy-coal
+China Railway Group,601390.SS,0390.HK,1.0,infrastructure
+China Railway Construction,601186.SS,1186.HK,1.0,infrastructure
+CRRC,601766.SS,1766.HK,1.0,industrial-rail
+China Communications Construction,601800.SS,1800.HK,1.0,infrastructure
+COSCO Shipping Holdings,601919.SS,1919.HK,1.0,shipping
+China Telecom,601728.SS,0728.HK,1.0,telecom
+China Unicom,600050.SS,0762.HK,1.0,telecom
+China Mobile,600941.SS,0941.HK,1.0,telecom
+Air China,601111.SS,0753.HK,1.0,transport-airline
+China Eastern Airlines,600115.SS,0670.HK,1.0,transport-airline
+China Southern Airlines,600029.SS,1055.HK,1.0,transport-airline
+Guangshen Railway,601333.SS,0525.HK,1.0,transport-rail
+Anhui Conch Cement,600585.SS,0914.HK,1.0,materials-cement
+Jiangxi Copper,600362.SS,0358.HK,1.0,materials-metals
+Maanshan Iron and Steel,600808.SS,0323.HK,1.0,materials-steel
+Tsingtao Brewery,600600.SS,0168.HK,1.0,consumer-staples
+Shanghai Electric,601727.SS,2727.HK,1.0,industrial-equipment
+Dongfang Electric,600875.SS,1072.HK,1.0,industrial-equipment
+Zijin Mining,601899.SS,2899.HK,1.0,materials-metals
+Guangzhou Automobile Group,601238.SS,2238.HK,1.0,consumer-auto
+BYD,002594.SZ,1211.HK,1.0,consumer-auto
+Weichai Power,000338.SZ,2338.HK,1.0,industrial-equipment
+CSPC Pharmaceutical Group Synthetic Pair,600511.SS,1093.HK,1.0,healthcare-pharma
+Sinopharm Synthetic Pair,600161.SS,1099.HK,1.0,healthcare-pharma
+China Resources Beer Synthetic Pair,600132.SS,0291.HK,1.0,consumer-staples
+CR Land Synthetic Pair,600606.SS,1109.HK,1.0,real-estate
+China Overseas Land Synthetic Pair,600648.SS,0688.HK,1.0,real-estate
+China Merchants Port Synthetic Pair,600018.SS,0144.HK,1.0,transport-port
+CK Hutchison Synthetic Pair,600662.SS,0001.HK,1.0,conglomerate
+HSBC Synthetic Pair,600015.SS,0005.HK,1.0,financial-bank
+Alibaba Health Synthetic Pair,600196.SS,0241.HK,1.0,healthcare
+Lenovo Synthetic Pair,600183.SS,0992.HK,1.0,technology-hardware
